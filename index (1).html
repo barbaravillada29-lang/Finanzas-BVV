@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis Finanzas — Barby</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:#FAF7F2;color:#3D2B1F;min-height:100vh}
+  h1,h2,h3{font-family:'Cormorant Garamond',serif;font-weight:600;color:#3D2B1F}
+  .app{padding:2rem 1.5rem;max-width:760px;margin:0 auto}
+  .header{text-align:center;margin-bottom:2rem}
+  .header h1{font-size:32px;letter-spacing:0.5px}
+  .header p{font-size:13px;color:#7A5C48;margin-top:4px}
+  .period-nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:1.5rem}
+  .period-nav button{background:#E8B4A0;border:none;color:#3D2B1F;font-size:20px;cursor:pointer;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .period-nav button:hover{background:#D4956A}
+  .period-label{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;min-width:220px;text-align:center}
+  .summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:1.5rem}
+  .summary-card{background:#fff;border-radius:12px;border:0.5px solid #D9C4A8;padding:1rem;text-align:center}
+  .summary-card .label{font-size:11px;color:#7A5C48;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px}
+  .summary-card .amount{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600}
+  .amount.positive{color:#5A7A5A}
+  .amount.negative{color:#C45A3A}
+  .amount.neutral{color:#B8865A}
+  .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem}
+  .meta-card{background:#fff;border-radius:12px;border:0.5px solid #D9C4A8;padding:1.25rem}
+  .meta-label{font-size:11px;color:#7A5C48;letter-spacing:0.8px;text-transform:uppercase;margin-bottom:6px}
+  .meta-bar-bg{background:#F0E4D6;border-radius:99px;height:8px;overflow:hidden;margin:8px 0}
+  .meta-bar-fill{background:#C47C5A;height:100%;border-radius:99px;transition:width 0.5s}
+  .meta-val{font-size:12px;color:#7A5C48}
+  .meta-input-row{display:flex;gap:8px;align-items:center;margin-top:10px}
+  .meta-input-row input{width:130px}
+  .meta-input-row button{background:#E8B4A0;border:none;border-radius:8px;padding:6px 14px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;color:#3D2B1F;white-space:nowrap}
+  .meta-input-row button:hover{background:#D4956A}
+  .chart-wrap{position:relative;width:100%;height:200px}
+  .section{background:#fff;border-radius:12px;border:0.5px solid #D9C4A8;padding:1.25rem;margin-bottom:1rem}
+  .section-title{font-size:17px;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+  .section-title i{font-size:18px;color:#C47C5A}
+  .add-row{display:grid;grid-template-columns:1fr 1fr 110px 36px;gap:8px;align-items:center;margin-bottom:0.75rem}
+  input[type=text],input[type=number],select{font-family:'DM Sans',sans-serif;font-size:13px;padding:7px 10px;border:0.5px solid #D9C4A8;border-radius:8px;background:#FAF7F2;color:#3D2B1F;width:100%;outline:none}
+  input:focus,select:focus{border-color:#C47C5A}
+  .btn-add{background:#E8B4A0;border:none;border-radius:8px;width:36px;height:34px;cursor:pointer;font-size:18px;color:#3D2B1F;display:flex;align-items:center;justify-content:center}
+  .btn-add:hover{background:#D4956A}
+  .items-list{font-size:13px}
+  .item-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid #F0E4D6}
+  .item-row:last-child{border-bottom:none}
+  .item-info{display:flex;flex-direction:column}
+  .item-name{font-weight:500;color:#3D2B1F}
+  .item-cat{font-size:11px;color:#7A5C48}
+  .item-amount-pos{font-weight:500;color:#5A7A5A}
+  .item-amount-neg{font-weight:500;color:#C45A3A}
+  .btn-del{background:none;border:none;cursor:pointer;font-size:15px;color:#D9C4A8;padding:0 4px}
+  .btn-del:hover{color:#C45A3A}
+  .history-list{font-size:13px}
+  .history-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:0.5px solid #F0E4D6}
+  .history-row:last-child{border-bottom:none}
+  .h-period{font-weight:500;color:#3D2B1F}
+  .empty{text-align:center;color:#B8A090;font-size:12px;padding:16px 0}
+  @media(max-width:500px){
+    .summary-grid{grid-template-columns:1fr 1fr}
+    .meta-grid{grid-template-columns:1fr}
+    .add-row{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
+    .add-row .btn-add{grid-column:2;justify-self:end}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>Mis finanzas</h1>
+    <p>seguimiento quincena a quincena</p>
+  </div>
+  <div class="period-nav">
+    <button onclick="changePeriod(-1)">&#8249;</button>
+    <div class="period-label" id="periodLabel"></div>
+    <button onclick="changePeriod(1)">&#8250;</button>
+  </div>
+  <div class="summary-grid">
+    <div class="summary-card"><div class="label">Ingresos</div><div class="amount positive" id="totalIncome">$0</div></div>
+    <div class="summary-card"><div class="label">Gastos</div><div class="amount negative" id="totalExpenses">$0</div></div>
+    <div class="summary-card"><div class="label">Balance</div><div class="amount neutral" id="totalBalance">$0</div></div>
+  </div>
+  <div class="meta-grid">
+    <div class="meta-card">
+      <div class="meta-label">Meta de ahorro</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#3D2B1F" id="goalDisplay">—</div>
+      <div class="meta-bar-bg"><div class="meta-bar-fill" id="goalBar" style="width:0%"></div></div>
+      <div class="meta-val" id="goalPct">Define tu meta abajo</div>
+      <div class="meta-input-row">
+        <input type="number" id="goalInput" placeholder="Ej: 500000" min="0">
+        <button onclick="setGoal()">Guardar meta</button>
+      </div>
+    </div>
+    <div class="meta-card">
+      <div class="meta-label">Distribución de gastos</div>
+      <div class="chart-wrap"><canvas id="donut"></canvas></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title"><i class="ti ti-arrow-up-circle"></i> Ingresos</div>
+    <div class="add-row">
+      <input type="text" id="incName" placeholder="Descripción">
+      <select id="incCat"><option>Salario</option><option>Freelance</option><option>Otro</option></select>
+      <input type="number" id="incAmt" placeholder="Monto" min="0">
+      <button class="btn-add" onclick="addIncome()"><i class="ti ti-plus"></i></button>
+    </div>
+    <div class="items-list" id="incomeList"></div>
+  </div>
+  <div class="section">
+    <div class="section-title"><i class="ti ti-arrow-down-circle"></i> Gastos</div>
+    <div class="add-row">
+      <input type="text" id="expName" placeholder="Descripción">
+      <select id="expCat"><option>Vivienda</option><option>Alimentación</option><option>Transporte</option><option>Salud</option><option>Entretenimiento</option><option>Deudas</option><option>Otros</option></select>
+      <input type="number" id="expAmt" placeholder="Monto" min="0">
+      <button class="btn-add" onclick="addExpense()"><i class="ti ti-plus"></i></button>
+    </div>
+    <div class="items-list" id="expenseList"></div>
+  </div>
+  <div class="section">
+    <div class="section-title"><i class="ti ti-history"></i> Historial de quincenas</div>
+    <div class="history-list" id="historyList"><div class="empty">Aún no hay períodos anteriores.</div></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const MONTHS=['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+const PERIODS=[];
+const now=new Date();
+for(let i=-10;i<=6;i++){const d=new Date(now.getFullYear(),now.getMonth()+Math.floor(i/2),1);const m=d.getMonth(),y=d.getFullYear(),half=(((i%2)+2)%2)===0?1:2;PERIODS.push({label:half===1?'1–15 '+MONTHS[m]+' '+y:'16–30 '+MONTHS[m]+' '+y,key:y+'-'+m+'-'+half});}
+let currentIdx=10,storage={},donutChart=null;
+function load(){try{storage=JSON.parse(localStorage.getItem('barby_finances')||'{}');}catch{storage={};}}
+function save(){try{localStorage.setItem('barby_finances',JSON.stringify(storage));}catch{}}
+function getGoal(){try{return parseFloat(localStorage.getItem('barby_goal'))||0;}catch{return 0;}}
+function saveGoal(v){try{localStorage.setItem('barby_goal',v);}catch{}}
+function periodData(){const k=PERIODS[currentIdx].key;if(!storage[k])storage[k]={incomes:[],expenses:[]};return storage[k];}
+function fmt(n){return '$'+Math.round(n).toLocaleString('es-CO');}
+function render(){const p=periodData();document.getElementById('periodLabel').textContent=PERIODS[currentIdx].label;const ti=p.incomes.reduce((s,i)=>s+i.amt,0),te=p.expenses.reduce((s,e)=>s+e.amt,0),bal=ti-te;document.getElementById('totalIncome').textContent=fmt(ti);document.getElementById('totalExpenses').textContent=fmt(te);const be=document.getElementById('totalBalance');be.textContent=fmt(bal);be.className='amount '+(bal>=0?'positive':'negative');renderList('incomeList',p.incomes,true);renderList('expenseList',p.expenses,false);renderGoal(bal);renderDonut(p.expenses);renderHistory();}
+function renderList(id,items,isInc){const el=document.getElementById(id);if(!items.length){el.innerHTML='<div class="empty">Sin registros aún.</div>';return;}el.innerHTML=items.map((item,i)=>'<div class="item-row"><div class="item-info"><span class="item-name">'+item.name+'</span><span class="item-cat">'+item.cat+'</span></div><div style="display:flex;align-items:center;gap:8px"><span class="'+(isInc?'item-amount-pos':'item-amount-neg')+'">'+fmt(item.amt)+'</span><button class="btn-del" onclick="delItem(\''+( isInc?'inc':'exp')+'\','+i+')"><i class="ti ti-x"></i></button></div></div>').join('');}
+function renderGoal(bal){const g=getGoal();document.getElementById('goalDisplay').textContent=g?fmt(g):'—';if(g>0){const pct=Math.min(100,Math.round(Math.max(0,bal)/g*100));document.getElementById('goalBar').style.width=pct+'%';document.getElementById('goalPct').textContent=pct+'% alcanzado';}else{document.getElementById('goalBar').style.width='0%';document.getElementById('goalPct').textContent='Define tu meta abajo';}}
+function setGoal(){const v=parseFloat(document.getElementById('goalInput').value);if(v>0){saveGoal(v);render();document.getElementById('goalInput').value='';}}
+function renderDonut(expenses){const cats={};expenses.forEach(e=>{cats[e.cat]=(cats[e.cat]||0)+e.amt;});const labels=Object.keys(cats),data=Object.values(cats),colors=['#E8B4A0','#D4956A','#C47C5A','#B8865A','#D9C4A8','#7A5C48','#F0D0BC'];if(donutChart){donutChart.destroy();donutChart=null;}if(!labels.length)return;donutChart=new Chart(document.getElementById('donut'),{type:'doughnut',data:{labels,datasets:[{data,backgroundColor:colors.slice(0,labels.length),borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{display:true,position:'bottom',labels:{font:{family:'DM Sans',size:10},color:'#7A5C48',boxWidth:10,padding:8}}}}});}
+function renderHistory(){const el=document.getElementById('historyList');const past=PERIODS.slice(0,currentIdx).filter(p=>storage[p.key]&&(storage[p.key].incomes.length||storage[p.key].expenses.length)).reverse();if(!past.length){el.innerHTML='<div class="empty">Aún no hay períodos anteriores.</div>';return;}el.innerHTML=past.slice(0,8).map(p=>{const d=storage[p.key],inc=d.incomes.reduce((s,i)=>s+i.amt,0),exp=d.expenses.reduce((s,e)=>s+e.amt,0),bal=inc-exp;return'<div class="history-row"><span class="h-period">'+p.label+'</span><span class="h-bal" style="font-weight:500;color:'+(bal>=0?'#5A7A5A':'#C45A3A')+'">'+fmt(bal)+'</span></div>';}).join('');}
+function addIncome(){const name=document.getElementById('incName').value.trim(),cat=document.getElementById('incCat').value,amt=parseFloat(document.getElementById('incAmt').value);if(!name||!amt||amt<=0)return;periodData().incomes.push({name,cat,amt});save();render();document.getElementById('incName').value='';document.getElementById('incAmt').value='';}
+function addExpense(){const name=document.getElementById('expName').value.trim(),cat=document.getElementById('expCat').value,amt=parseFloat(document.getElementById('expAmt').value);if(!name||!amt||amt<=0)return;periodData().expenses.push({name,cat,amt});save();render();document.getElementById('expName').value='';document.getElementById('expAmt').value='';}
+function delItem(type,idx){if(type==='inc')periodData().incomes.splice(idx,1);else periodData().expenses.splice(idx,1);save();render();}
+function changePeriod(dir){const next=currentIdx+dir;if(next>=0&&next<PERIODS.length){currentIdx=next;render();}}
+load();render();
+</script>
+</body>
+</html>
